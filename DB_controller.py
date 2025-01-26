@@ -10,7 +10,7 @@ db_path = os.path.join(base_dir, 'data', 'my_notes.db')
 connection = sqlite3.connect(db_path)
 cursor = connection.cursor()
 
-# Создаем тестовую таблицу
+# Создаем таблицу
 cursor.execute('''
 CREATE TABLE IF NOT EXISTS Notes (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -21,6 +21,7 @@ CREATE TABLE IF NOT EXISTS Notes (
 )
 ''')
 
+#Шаблон для вставки элемента в таблицу
 adding_note = 'INSERT INTO Notes (title, description, date, time) VALUES (?, ?, ?, ?);'
 
 #Тестовое наполнение базы данных
