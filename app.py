@@ -4,6 +4,34 @@ import properties # type: ignore
 #import DB_controller
 windll.shcore.SetProcessDpiAwareness(1)
 
+class Card(Frame):
+    def __init__(self, master=None, title="", description=""):
+
+        card_width = properties.CARD_WIDTH  # Ширина карточки
+        card_height = properties.CARD_HEIGHT  # Высота карточки
+        self.card_bg = properties.CARD_BG_COLOR
+        card_bd = properties.CARD_BORDER_WIDTH
+        card_relief = properties.CARD_RELIEF
+
+        super().__init__(master, width=card_width, height=card_height, bg=self.card_bg, bd=card_bd, relief=card_relief)
+        self.title = title
+        self.description = description
+        self.create_widgets()
+        
+    def create_widgets(self):
+        # Заголовок
+        self.title_label = Label(self, text=self.title, font=("Arial", 12, "bold"), bg = self.card_bg)
+        self.title_label.pack(anchor="nw", padx=10, pady=5)
+
+        # Описание
+        self.desc_label = Label(self, text=self.description, wraplength=340 ,bg=self.card_bg)
+        self.desc_label.pack(anchor="nw", padx=10)
+
+        # Дата и время создания заметки
+        now = 'now'
+        self.date_label = Label(self, text=f"Создано: {now}", font=("Arial", 8), bg=self.card_bg)
+        self.date_label.pack(side="bottom", anchor="se", padx=10, pady=5)
+
 class main_window(Frame):
     def __init__(self, master): 
         Frame.__init__(self, master)  
@@ -50,11 +78,15 @@ class main_window(Frame):
         row = 0
 
         for i in range(36):
-            card = Frame(self.cards_frame, width=card_width, height=card_height, bg='lightblue', relief='raised', bd=2)
-            card.grid(row=row, column=i % columns, padx=card_padx, pady=card_pady)  # Используем grid для размещения
-
-            label = Label(card, text=f'Заметка {i+1}', bg='lightblue')
-            label.place(relx=0.5, rely=0.5, anchor='center')
+            if i==10:
+                card = Card(self.cards_frame, title=f'Заметка {i+1}', description="Это описание для карточки. бяяббябябябябябябябябябяяббябябябябя")
+            else:
+                card = Card(self.cards_frame, title=f'Заметка {i+1}', description="Это описание для карточки. ")
+            #card = Frame(self.cards_frame, width=card_width, height=card_height, bg='lightblue', relief='raised', bd=2)
+            card.grid(row=row, column=i % columns, padx=card_padx, pady=card_pady, sticky=E)  # Используем grid для размещения
+            card.pack_propagate(False)
+            #label = Label(card, text=f'Заметка {i+1}', bg='lightblue')
+            #label.place(relx=0.5, rely=0.5, anchor='center')
 
             if (i + 1) % columns == 0:  # Переход на новую строку
                 row += 1
@@ -71,7 +103,7 @@ class main_window(Frame):
 # Создание основного окна
 root = Tk()
 root.title("MyNotes")
-root.geometry("1100x1080")  # Задаем размер окна
+root.geometry("1120x1080")  # Задаем размер окна
 # Инициализация и отображение окна
 app = main_window(master=root)
 app.mainloop()
