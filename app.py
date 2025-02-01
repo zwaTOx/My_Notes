@@ -5,32 +5,52 @@ import properties # type: ignore
 windll.shcore.SetProcessDpiAwareness(1)
 
 class Card(Frame):
-    def __init__(self, master=None, title="", description=""):
-
-        card_width = properties.CARD_WIDTH  # Ширина карточки
-        card_height = properties.CARD_HEIGHT  # Высота карточки
+    def __init__(self, id, title, master=None, description=""):
+        #Настройки карточки
+        self.card_width = properties.CARD_WIDTH 
+        card_height = properties.CARD_HEIGHT  
         self.card_bg = properties.CARD_BG_COLOR
         card_bd = properties.CARD_BORDER_WIDTH
         card_relief = properties.CARD_RELIEF
 
-        super().__init__(master, width=card_width, height=card_height, bg=self.card_bg, bd=card_bd, relief=card_relief)
+        super().__init__(master, width=self.card_width, height=card_height, 
+        bg=self.card_bg, bd=card_bd, relief=card_relief)
+        self.id = id
         self.title = title
         self.description = description
         self.create_widgets()
-        
+
+        self.bind("<Button-1>", self.on_click)
+
     def create_widgets(self):
         # Заголовок
-        self.title_label = Label(self, text=self.title, font=("Arial", 12, "bold"), bg = self.card_bg)
+        self.title_label = Label(self, text=self.title, 
+            font=("Arial", 12, "bold"), 
+            wraplength=self.card_width-20, 
+            bg = self.card_bg,
+            justify="left")
         self.title_label.pack(anchor="nw", padx=10, pady=5)
 
         # Описание
-        self.desc_label = Label(self, text=self.description, wraplength=340 ,bg=self.card_bg)
-        self.desc_label.pack(anchor="nw", padx=10)
+        self.desc_label = Label(self, text=self.description, 
+            font=("Arial", 8), 
+            wraplength=self.card_width-20, 
+            bg=self.card_bg, 
+            justify="left")
+        self.desc_label.pack(anchor="nw", padx=10, pady=5)
 
         # Дата и время создания заметки
         now = 'now'
         self.date_label = Label(self, text=f"Создано: {now}", font=("Arial", 8), bg=self.card_bg)
         self.date_label.pack(side="bottom", anchor="se", padx=10, pady=5)
+
+        # Регистация нажатия
+        self.title_label.bind("<Button-1>", self.on_click)
+        self.desc_label.bind("<Button-1>", self.on_click)
+        self.date_label.bind("<Button-1>", self.on_click)
+
+    def on_click(self, event):
+        print(f'card: id={self.id}')
 
 class main_window(Frame):
     def __init__(self, master): 
@@ -70,23 +90,18 @@ class main_window(Frame):
         #for widget in self.cards_frame.winfo_children():
         #    widget.destroy()
 
-        card_width = properties.CARD_WIDTH  # Ширина карточки
-        card_height = properties.CARD_HEIGHT  # Высота карточки
         columns = properties.CARD_COLUMNS  # Количество карточек в ряд
         card_padx = properties.CARD_PADX
         card_pady = properties.CARD_PADY
         row = 0
 
         for i in range(36):
-            if i==10:
-                card = Card(self.cards_frame, title=f'Заметка {i+1}', description="Это описание для карточки. бяяббябябябябябябябябябяяббябябябябя")
+            if i==5:
+                card = Card(master=self.cards_frame, id=i, title=f'Заметка заметка заметка заметка заметка {i+1}', description="Это описание для карточки. бяяббябябябябябябябябябяяббябябябябя")
             else:
-                card = Card(self.cards_frame, title=f'Заметка {i+1}', description="Это описание для карточки. ")
-            #card = Frame(self.cards_frame, width=card_width, height=card_height, bg='lightblue', relief='raised', bd=2)
-            card.grid(row=row, column=i % columns, padx=card_padx, pady=card_pady, sticky=E)  # Используем grid для размещения
-            card.pack_propagate(False)
-            #label = Label(card, text=f'Заметка {i+1}', bg='lightblue')
-            #label.place(relx=0.5, rely=0.5, anchor='center')
+                card = Card(master=self.cards_frame, id=i, title=f'Заметка {i+1}', description="Это описание для карточки. ")
+            card.grid(row=row, column=i % columns, padx=card_padx, pady=card_pady, sticky=E) 
+            card.pack_propagate(False) #Оставляем фиксированный размер
 
             if (i + 1) % columns == 0:  # Переход на новую строку
                 row += 1
