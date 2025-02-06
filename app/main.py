@@ -1,61 +1,18 @@
 from tkinter import *
 from ctypes import windll
 import properties # type: ignore
+
+from card import Card # type: ignore
+from CardCreationWindow import card_creation_window # type: ignore
 #import DB_controller
 windll.shcore.SetProcessDpiAwareness(1)
-
-class Card(Frame):
-    def __init__(self, id, title, master=None, description=""):
-        #Настройки карточки
-        self.card_width = properties.CARD_WIDTH 
-        card_height = properties.CARD_HEIGHT  
-        self.card_bg = properties.CARD_BG_COLOR
-        card_bd = properties.CARD_BORDER_WIDTH
-        card_relief = properties.CARD_RELIEF
-
-        super().__init__(master, width=self.card_width, height=card_height, 
-        bg=self.card_bg, bd=card_bd, relief=card_relief)
-        self.id = id
-        self.title = title
-        self.description = description
-        self.create_widgets()
-
-        self.bind("<Button-1>", self.on_click)
-
-    def create_widgets(self):
-        # Заголовок
-        self.title_label = Label(self, text=self.title, 
-            font=("Arial", 12, "bold"), 
-            wraplength=self.card_width-20, 
-            bg = self.card_bg,
-            justify="left")
-        self.title_label.pack(anchor="nw", padx=10, pady=5)
-
-        # Описание
-        self.desc_label = Label(self, text=self.description, 
-            font=("Arial", 8), 
-            wraplength=self.card_width-20, 
-            bg=self.card_bg, 
-            justify="left")
-        self.desc_label.pack(anchor="nw", padx=10, pady=5)
-
-        # Дата и время создания заметки
-        now = 'now'
-        self.date_label = Label(self, text=f"Создано: {now}", font=("Arial", 8), bg=self.card_bg)
-        self.date_label.pack(side="bottom", anchor="se", padx=10, pady=5)
-
-        # Регистация нажатия
-        self.title_label.bind("<Button-1>", self.on_click)
-        self.desc_label.bind("<Button-1>", self.on_click)
-        self.date_label.bind("<Button-1>", self.on_click)
-
-    def on_click(self, event):
-        print(f'card: id={self.id}')
 
 class main_window(Frame):
     def __init__(self, master): 
         Frame.__init__(self, master)  
         self.pack(expand=True, fill='both') 
+        self.master.title("MyNotes")
+        self.master.geometry("1120x1080") 
         self.create_widgets()  # Метод для создания элементов интерфейса
 
     def create_widgets(self):
@@ -82,8 +39,22 @@ class main_window(Frame):
         self.update_cards()
         
         # Создаем тестовую кнопку "Выход" в footer_bar
-        self.quit_button = Button(self.footer_bar, text="Выход", command=self.quit)
+        self.quit_button = Button(self.footer_bar, text="Создать", command=self.open_card_creation_window)
         self.quit_button.pack(side='right', padx=10, pady=5) 
+    
+    def open_card_creation_window(self):
+        # Создаем новое окно для создания карточки
+        self.master.withdraw()  # Скрываем главное окно
+        creation_window = card_creation_window(self.master, self)  # Создаем экземпляр класса CardCreationWindow
+
+        # Обработчик события закрытия окна создания карточки
+        creation_window.protocol("WM_DELETE_WINDOW", lambda: self.show_main_window(creation_window))
+
+    def show_main_window(self, creation_window):
+        # Возвращаемся к основному окну и закрываем побочное
+        self.master.deiconify()
+        self.update_cards()
+        creation_window.destroy()
 
     def update_cards(self):
         # Очищаем предыдущие карточки из cards_frame
