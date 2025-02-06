@@ -1,4 +1,5 @@
 from tkinter import Label, Entry, Button, Toplevel, Tk, Text
+from DB_controller import NotesDatabase # type: ignore
 
 class card_creation_window(Toplevel):
     def __init__(self, master, main_window):
@@ -28,6 +29,13 @@ class card_creation_window(Toplevel):
         description = self.description_text.get("1.0", "end-1c")  # Получаем текст из текстовой области
         # Здесь можно добавить код для сохранения заголовка и описания карточки
         print("Сохранено:", title, description)
+        try:
+           database = NotesDatabase()
+           database.add_note(title, description)
+           database.close()
+           print("Запись успешна!")
+        except Exception as e:
+           print("Ошибка при записи в базу данных:", e)
         self.main_window.show_main_window(self)
 
     def close_window(self):
