@@ -56,11 +56,12 @@ class NotesDatabase:
     def drop_database(self):
         #Удаление базы данных
         os.remove(self.path)
-    
-db = NotesDatabase()
-db.add_note('t2', 'heeey')
-db.add_note('t1')
-db.delete_notes(1,2)
-db.display_notes()
-db.close()
-db.drop_database()
+
+if __name__ == "__main__":
+    db = NotesDatabase()
+    db.add_note('t2', 'heeey')
+    db.add_note('t1')
+    db.delete_notes(1,2)
+    db.display_notes()
+    db.close()
+    #db.drop_database()

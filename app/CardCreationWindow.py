@@ -1,4 +1,4 @@
-from tkinter import Label, Entry, Button, Toplevel
+from tkinter import Label, Entry, Button, Toplevel, Tk
 
 class card_creation_window(Toplevel):
     def __init__(self, master, main_window):
